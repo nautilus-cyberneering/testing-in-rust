@@ -1,0 +1,16 @@
+{
+  "ignorePaths": [
+    ".vscode",
+    "**/target/**"
+  ],
+  "language": "en",
+  "noConfigSearch": true,
+  "words": [
+    "Khorikov",
+    "Klabnik",
+    "Manish",
+    "Shivanandhan",
+    "struct"
+  ],
+  "version": "0.2"
+}
