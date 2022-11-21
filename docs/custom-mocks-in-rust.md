@@ -1,20 +1,20 @@
 # Custom mocks in Rust
 
-Org: [Nautilus Cyberneering](https://github.com/Nautilus-Cyberneering).
-Author: [Jose Celano](https://github.com/josecelano).
+- Org: [Nautilus Cyberneering](https://github.com/Nautilus-Cyberneering).
+- Author: [Jose Celano](https://github.com/josecelano).
 
 ## Introduction
 
-I'm working in a [BitTorrent tracker](https://github.com/torrust/torrust-tracker) in Rust. It's my first Rust project. I started working on the project and learning Rust on the 6th of July of 2022.
+I'm working in a [BitTorrent tracker](https://github.com/torrust/torrust-tracker) in Rust. It's my first Rust project. I started working on the project and learning Rust on the 6th of July, 2022.
 
-I did not want to start adding features without knowing the code base. So I decided to start adding automated tests in order to get to know the code before making changes.
+I wanted to know the code base before starting to add features. So I started adding automated tests to get to know the code before making changes.
 
-I've been working mainly with dynamic type languages so when it comes to create test doubles I have never had any problem. Rust is not only a typed language, it also implements a "borrowing" mechanism which enforces these rules:
+I've been working mainly with dynamic type languages, so when it comes to creating test doubles, I have never had any problem. Rust is not only a typed language; it also implements a "borrowing" mechanism which enforces these rules:
 
 - At any given time, you can have either (but not both) one mutable reference or any number of immutable references.
 - References must always be valid.
 
-I was working on the tracker when I wanted to add a new test to check that a method for a class collaborator was called. It is a very common test. What we have is a Tracker, which is the main domain class and it uses an event sender to send events. Every time that something relevant happens, the tracker sends an event so that other parts of the software can react to it. In this case we have a `TrackerStatistics` class that is listening to all the events and increasing counters for each type of request.
+I was working on the tracker when I wanted to add a new test to check that a method for a class collaborator was called. It is a very common test. We have a Tracker, the primary domain class, that uses an `EventSender` to send events. Every time something relevant happens, the tracker sends an event so that other parts of the software can react. In this case, we have a `TrackerStatistics` class that listens to all the events and increases counters for each request type.
 
 ## Production code
 
@@ -26,26 +26,26 @@ pub struct Tracker {
 }
 ```
 
-We added the trait `EventSender` because we wanted to have two implementations. The one we use in production code and the mock we want to use in the test. In our real case we wanted to mock the dependency because it is an "async" function executed in a different thread. I other words, it's an out-of-process dependency. Even if it's a managed out-of-process dependency, testing with threads was very hard to do it without changing the production code. I did not want to do that because I do not like to force a change in production code just to test it, if that change does not fit well. See the ["Test Induced design damage"](https://dhh.dk/2014/test-induced-design-damage.html) article.
+We added the trait `EventSender` because we wanted two implementations—the one we use in production code and the mock we want to use in the test. In our real case, we wanted to mock the dependency because it is an "async" function executed in a different thread. In other words, it's an out-of-process dependency. Even if it's a managed out-of-process dependency, testing with threads was very hard to do without changing the production code. I did not want to do that because I'm not particularly eager to force a change in production code just to test it if that change does not fit well. See the ["Test Induced design damage"](https://dhh.dk/2014/test-induced-design-damage.html) article.
 
-This example is simpler because we are not using concurrency and we could use the real sender instead of the mock. But a similar solution could be apply if you are using threads or you have a dependency you want to mock.
+This example is more straightforward because we are not using concurrency, and we could use the actual sender instead of the mock. But a similar solution could be applied if you are using threads or have a dependency you want to mock.
 
-Before explaining the tests and the problem we need to explain another thing that could be unfamiliar for developers use to dynamic languages like me. As you can see the `Tracker` struct contains an `event_sender` which is a `Rc<dyn EventSender>` type.
+Before explaining the tests and the problem, we need to explain another thing that could be unfamiliar to developers used to dynamic languages like me. As you can see, the `Tracker` struct contains an `event_sender` which is an `Rc<dyn EventSender>` type.
 
 We need the `dyn EventSender` type because we do not know the type at compile time.
 
-The `Rc` (Reference Counted) is a kind of wrapper of our type that allow us to share the ownership. That means we can have two copies of that "pointer" pointing at the same value.
-We need that only for the test. In the production code `EventSender` could be owned by the `Tracker` but in the test we need to keep a copy of the mock for the assertions.
+The `Rc` (Reference Counted) is a kind of wrapper of our type that allows us to share ownership. That means we can have two copies of that "pointer" pointing at the same value.
+We need that `Rc` only for the test. In the production code `EventSender` could be owned by the `Tracker` but in the test we need to keep a copy of the mock for the assertions because we need to access its state after the `Tracker` has been called.
 
 That's all regarding the production code.
 
 ## Test code
 
-The test we wanted to write was very easy. We only wanted to check that a given event was sent when a certain request was made. For example, if a BitTorrent client makes a connection request we want to test that the `Tracker` sends the `Event::Connect` using the `EventSender`.
+The test we wanted to write was elementary. We only wanted to check that a given event was sent when a certain request was made. For example, if a BitTorrent client makes a connection request, we want to test that the `Tracker` sends the `Event::Connect` using the `EventSender`.
 
-I did not want to use a mocking framework because the test was supposed to be simple and I do not like adding dependencies if there is a simpler way to do the same. Dependencies add an extra maintenance cost and a security risk (because sometimes you add more code than what you need).
+I did not want to use a mocking framework because the test was supposed to be simple and I do not like adding dependencies if there is a simpler way to do the same. Dependencies add an extra maintenance cost and a security risk (because sometimes you add more code than you need).
 
-So, I decided to create my custom mock for the `EventSender`. The idea was simple: I can store the event that is passed to the `send_event` function and check if it matches the one I expect.
+So, I created my custom mock for the `EventSender`. The idea was simple: I can store the event that is passed to the `send_event` function and check if it matches the one I expected.
 
 ```rust
 #[derive(Clone, Copy)]
@@ -85,21 +85,21 @@ That code did not work because of this line:
 self.sent_event = Some(event);
 ```
 
-Since the `self` reference is not mutable you can not change the `sent_event` value.
+Since the `self` reference is not mutable, you can not change the `sent_event` value.
 
-I did not know how to implement it but [Cameron](https://github.com/da2ce7) pointed me to the solution. The not mutable `self` reference does not allow you to change the attributes in the struct but it's not recursive. Rust has some types that allows you to change the interior mutability.
+I needed to learn how to implement it, and [Cameron](https://github.com/da2ce7) pointed me to the solution. The not mutable `self` reference does not allow you to change the attributes in the struct, but it's not recursive. Rust has some types that allow you to change the interior mutability.
 
 Rust has a pattern called the ["Interior Mutability Pattern"](https://doc.rust-lang.org/book/ch15-05-interior-mutability.html#refcellt-and-the-interior-mutability-pattern).
 
-> Interior mutability is a design pattern in Rust that allows you to mutate data even when there are immutable references to that data; normally, this action is disallowed by the borrowing rules. To mutate data, the pattern uses unsafe code inside a data structure to bend Rust’s usual rules that govern mutation and borrowing.
+> Interior mutability is a design pattern in Rust that allows you to mutate data even when there are immutable references to that data; typically, this action is disallowed by the borrowing rules. To mutate data, the pattern uses unsafe code inside a data structure to bend Rust's usual rules that govern mutation and borrowing.
 
-The way you can "bend" Rust rules is with a `RefCell` type.
+You can "bend" Rust rules with a `RefCell` type.
 
 > RefCell is a mutable memory location with dynamically checked borrow rules.
 
 That means you can mutate the value inside the `RefCell` even when `RefCell` is immutable.
 
-From the Rust book you can see the different types to "bend" Rust rules:
+From the Rust book, you can see the different types to "bend" Rust rules:
 
 - `Rc<T>` enables multiple owners of the same data.
 - `Box<T>` and `RefCell<T>` have single owners.
@@ -147,15 +147,15 @@ The final test was like this:
 
 ## Conclusion
 
-Learning how to handle pointers, references or whatever is called in any other languages is hard. I remember to be surprised for some behavior in other languages by mutating things I did not expect to be mutable. At least wih Rust you are not surprised because the only way to do it is knowing what you are doing it.
+Learning how to handle pointers, references or whatever is called in other languages takes a lot of work. I remember being surprised by other languages that mutate things I did not expect to be mutable. At least with Rust, you are not surprised because the only way to do it is by knowing what you are doing and doing it explicitly.
 
 I finally decided to use `mockall` (the mocking framework) for some reasons:
 
-1. We want to add more tests to that project and sooner or later we are going to need more complex mocks.
+1. We want to add more tests to that project, and sooner or later, we will need more complex mocks.
 2. The `mockall` readability is better because of its fluent style.
-3. `mockall` allows you to be more precise with the number of calls.
+3. `mockall` allows you to be more precise, for example checking also the number of calls.
 
-The final solution using [mockall](https://docs.rs/mockall/latest/mockall/):
+YOu can read the final solution using [mockall](https://docs.rs/mockall/latest/mockall/) [here](https://github.com/torrust/torrust-tracker/blob/develop/src/udp/handlers.rs#L426-L463):
 
 <https://github.com/torrust/torrust-tracker/blob/develop/src/udp/handlers.rs#L426-L463>
 
