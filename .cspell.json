@@ -9,8 +9,13 @@
     "Khorikov",
     "Klabnik",
     "Manish",
+    "millis",
+    "mpsc",
+    "reqwest",
     "Shivanandhan",
-    "struct"
+    "struct",
+    "structs",
+    "Zupan"
   ],
   "version": "0.2"
 }

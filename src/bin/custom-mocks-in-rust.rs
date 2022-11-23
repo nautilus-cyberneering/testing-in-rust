@@ -1,4 +1,6 @@
-use std::{sync::Arc, rc::Rc};
+//! cargo run --bin custom-mocks-in-rust
+
+use std::{rc::Rc, sync::Arc};
 
 use testing_in_rust::example01::{
     events::TrackerEventSender, handlers::handle_connect, tracker::Tracker,
