@@ -2,6 +2,7 @@
 
 - Org: [Nautilus Cyberneering](https://github.com/Nautilus-Cyberneering).
 - Author: [Jose Celano](https://github.com/josecelano).
+- Reviewers: [Constantin Bosse](https://github.com/cgbosse) and [Honor Prysor](https://www.linkedin.com/in/honor-prysor-ma-celta-94560074).
 
 ## Introduction
 
@@ -147,15 +148,15 @@ The final test was like this:
 
 ## Conclusion
 
-Learning how to handle pointers, references or whatever is called in other languages takes a lot of work. I remember being surprised by other languages that mutate things I did not expect to be mutable. At least with Rust, you are not surprised because the only way to do it is by knowing what you are doing and doing it explicitly.
+Learning how to handle pointers, references or whatever they are called in other languages takes a lot of work. I remember being surprised by other languages that mutate things I did not expect to be mutable. At least with Rust, you are not surprised because the only way to do it is by knowing what you are doing and doing it explicitly.
 
-I finally decided to use `mockall` (the mocking framework) for some reasons:
+I finally decided to use `mockall` (the mocking framework) for a few reasons:
 
 1. We want to add more tests to that project, and sooner or later, we will need more complex mocks.
 2. The `mockall` readability is better because of its fluent style.
 3. `mockall` allows you to be more precise, for example checking also the number of calls.
 
-YOu can read the final solution using [mockall](https://docs.rs/mockall/latest/mockall/) [here](https://github.com/torrust/torrust-tracker/blob/develop/src/udp/handlers.rs#L426-L463):
+You can read the final solution using [mockall](https://docs.rs/mockall/latest/mockall/) [here](https://github.com/torrust/torrust-tracker/blob/develop/src/udp/handlers.rs#L426-L463):
 
 <https://github.com/torrust/torrust-tracker/blob/develop/src/udp/handlers.rs#L426-L463>
 
