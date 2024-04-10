@@ -6,6 +6,7 @@ A collection of articles about testing in Rust.
 
 - [Custom mocks in Rust](./docs/custom-mocks-in-rust.md).
 - [Testing APIs in Rust](./docs/testing-apis-in-rust.md).
+- [Static vs Dynamic mocks in Rust](./docs/static-vs-dynamic-mocks-in-rust.md).
 
 ## Links
 
