@@ -8,6 +8,13 @@ A collection of articles about testing in Rust.
 - [Testing APIs in Rust](./docs/testing-apis-in-rust.md).
 - [Static vs Dynamic mocks in Rust](./docs/static-vs-dynamic-mocks-in-rust.md).
 
+## Contributions
+
+- Open a PR with a new article.
+- Open a [discussion](https://github.com/nautilus-cyberneering/testing-in-rust/discussions) about testing in Rust.
+- Improve the current articles by fixing bugs, and making them clearer ...
+- ...
+
 ## Links
 
 - ["Unit Testing" book](https://www.manning.com/books/unit-testing) by [Vladimir Khorikov](https://github.com/vkhorikov).

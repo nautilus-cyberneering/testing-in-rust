@@ -29,6 +29,11 @@ impl App {
         self.user_repository.add_user(User::new("Bob"));
         self.user_repository.add_user(User::new("Charlie"));
 
+        /*for i in 1..10_000_000 {
+            self.user_repository
+                .add_user(User::new(&format!("User {i}")));
+        }*/
+
         for (i, user) in self.user_repository.get_all_users().iter().enumerate() {
             output.push_str(&format!("User {i}: {user:?}\n"));
         }
