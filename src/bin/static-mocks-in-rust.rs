@@ -1,13 +1,8 @@
 //! ```text
 //! cargo run --bin static-mocks-in-rust
 //! ```
-use std::net::{IpAddr, Ipv4Addr, SocketAddr};
+use testing_in_rust::example04::app::run;
 
-use testing_in_rust::example04::api::start_server;
-
-#[tokio::main]
-async fn main() {
-    let bind_address = SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 3030);
-
-    start_server(bind_address).await;
+fn main() {
+    print!("{}", run());
 }
