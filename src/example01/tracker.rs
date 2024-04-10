@@ -2,7 +2,7 @@ use std::{error::Error, rc::Rc};
 
 use crate::example01::events::{Event, EventSender};
 
-/// BitTorrent tracker
+/// `BitTorrent` tracker
 pub struct Tracker {
     event_sender: Rc<dyn EventSender>,
 }
@@ -12,11 +12,14 @@ impl Tracker {
         Self { event_sender }
     }
 
+    /// # Errors
+    ///
+    /// Will return an error if `Connect` event cant' be sent.
     pub fn connect(&self) -> Result<(), Box<dyn Error>> {
         println!("Tracker::connect.");
 
         // After connecting the tracker sends an event
-        self.event_sender.send_event(Event::Connect).unwrap();
+        self.event_sender.send_event(Event::Connect)?;
 
         Ok(())
     }
@@ -24,7 +27,7 @@ impl Tracker {
 
 #[cfg(test)]
 mod tests {
-    use std::{cell::RefCell, error::Error, rc::Rc, sync::Arc};
+    use std::{cell::RefCell, error::Error, rc::Rc};
 
     use crate::example01::{
         events::{Event, EventSender, TrackerEventSender},
@@ -35,7 +38,7 @@ mod tests {
     fn the_tracker_should_allow_connections() {
         // This is just a dummy test to show how we use the real struct instead of the mock
         let event_sender = Rc::new(TrackerEventSender {});
-        let tracker = Arc::new(Tracker::new(event_sender));
+        let tracker = Rc::new(Tracker::new(event_sender));
 
         assert!(tracker.connect().is_ok());
     }
@@ -67,7 +70,7 @@ mod tests {
         // Test using a custom mock for the TrackerEventSender
 
         let event_sender = Rc::new(TrackerEventSenderMock::new());
-        let tracker = Arc::new(Tracker::new(event_sender.clone()));
+        let tracker = Rc::new(Tracker::new(event_sender.clone()));
 
         tracker.connect().unwrap();
 

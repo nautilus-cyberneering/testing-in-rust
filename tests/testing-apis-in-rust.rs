@@ -10,7 +10,7 @@ async fn it_should_greeting_you() {
 
     start_server_and_wait_until_is_ready_to_accept_requests(bind_address).await;
 
-    let url = format!("http://{}/hello/{}", &bind_address, "warp");
+    let url = format!("http://{}/hello/{}", &bind_address, "warp"); // DevSkim: ignore DS137138
 
     let content = reqwest::get(url).await.unwrap().text().await.unwrap();
 

@@ -64,7 +64,7 @@ impl ApiServerStarter {
 }
 ```
 
-That was the first version, and we changed but before explaining the latest version, we want to explain why we needed to change it.
+That was the first version, and we changed it but before explaining the latest version, we want to explain why we needed to change it.
 
 ## ConnectionRefused error
 
@@ -103,7 +103,7 @@ pub async fn start(&mut self, addr: SocketAddr) {
 }
 ```
 
-That worked was we were not happy with adding a random sleep time. Because that:
+That worked but we were not happy with adding a random sleep time. Because that:
 
 - Make tests slower.
 - Could make the test fail if, for some reason, the web server takes more than 100 milliseconds to be ready.

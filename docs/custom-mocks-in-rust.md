@@ -72,7 +72,7 @@ fn the_tracker_should_send_a_connect_event_after_connecting() {
     // Test using a custom mock for the TrackerEventSender
 
     let event_sender = Rc::new(TrackerEventSenderMock::new());
-    let tracker = Arc::new(Tracker::new(event_sender.clone()));
+    let tracker = Rc::new(Tracker::new(event_sender.clone()));
 
     tracker.connect();
 
@@ -88,7 +88,7 @@ self.sent_event = Some(event);
 
 Since the `self` reference is not mutable, you can not change the `sent_event` value.
 
-I needed to learn how to implement it, and [Cameron](https://github.com/da2ce7) pointed me to the solution. The not mutable `self` reference does not allow you to change the attributes in the struct, but it's not recursive. Rust has some types that allow you to change the interior mutability.
+I needed to learn how to implement it, and [Cameron](https://github.com/da2ce7) pointed me to the solution. The immutable `self` reference does not allow you to change the attributes in the struct, but it's not recursive. Rust has some types that allow you to change the interior mutability.
 
 Rust has a pattern called the ["Interior Mutability Pattern"](https://doc.rust-lang.org/book/ch15-05-interior-mutability.html#refcellt-and-the-interior-mutability-pattern).
 
@@ -111,39 +111,39 @@ From the Rust book, you can see the different types to "bend" Rust rules:
 The final test was like this:
 
 ```rust
-    #[derive(Clone)]
-    struct TrackerEventSenderMock {
-        pub sent_event: RefCell<Option<Event>>,
-    }
+#[derive(Clone)]
+struct TrackerEventSenderMock {
+    pub sent_event: RefCell<Option<Event>>,
+}
 
-    impl TrackerEventSenderMock {
-        pub fn new() -> Self {
-            Self {
-                sent_event: RefCell::new(None),
-            }
+impl TrackerEventSenderMock {
+    pub fn new() -> Self {
+        Self {
+            sent_event: RefCell::new(None),
         }
     }
+}
 
-    impl EventSender for TrackerEventSenderMock {
-        fn send_event(&self, event: Event) -> Result<(), Box<dyn Error>> {
-            *self.sent_event.borrow_mut() = Some(event);
+impl EventSender for TrackerEventSenderMock {
+    fn send_event(&self, event: Event) -> Result<(), Box<dyn Error>> {
+        *self.sent_event.borrow_mut() = Some(event);
 
-            // We return the expected value
-            Ok(())
-        }
+        // We return the expected value
+        Ok(())
     }
+}
 
-    #[test]
-    fn the_tracker_should_send_a_connect_event_after_connecting() {
-        // Test using a custom mock for the TrackerEventSender
+#[test]
+fn the_tracker_should_send_a_connect_event_after_connecting() {
+    // Test using a custom mock for the TrackerEventSender
 
-        let event_sender = Rc::new(TrackerEventSenderMock::new());
-        let tracker = Arc::new(Tracker::new(event_sender.clone()));
+    let event_sender = Rc::new(TrackerEventSenderMock::new());
+    let tracker = Rc::new(Tracker::new(event_sender.clone()));
 
-        tracker.connect().unwrap();
+    tracker.connect().unwrap();
 
-        assert_eq!(event_sender.sent_event.borrow().unwrap(), Event::Connect);
-    }
+    assert_eq!(event_sender.sent_event.borrow().unwrap(), Event::Connect);
+}
 ```
 
 ## Conclusion
@@ -156,9 +156,9 @@ I finally decided to use `mockall` (the mocking framework) for a few reasons:
 2. The `mockall` readability is better because of its fluent style.
 3. `mockall` allows you to be more precise, for example checking also the number of calls.
 
-You can read the final solution using [mockall](https://docs.rs/mockall/latest/mockall/) [here](https://github.com/torrust/torrust-tracker/blob/develop/src/udp/handlers.rs#L426-L463):
+You can read the final solution using [mockall](https://docs.rs/mockall/latest/mockall/) [here](https://github.com/torrust/torrust-tracker/blob/af52045436644ba2ba3c43195a0c1b6b0bfdbd42/src/servers/udp/handlers.rs#L490-L527):
 
-<https://github.com/torrust/torrust-tracker/blob/develop/src/udp/handlers.rs#L426-L463>
+<https://github.com/torrust/torrust-tracker/blob/af52045436644ba2ba3c43195a0c1b6b0bfdbd42/src/servers/udp/handlers.rs#L490-L527>
 
 ```rust
 #[tokio::test]

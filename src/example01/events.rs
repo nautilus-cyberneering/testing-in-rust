@@ -8,6 +8,9 @@ pub enum Event {
 }
 
 pub trait EventSender {
+    /// # Errors
+    ///
+    /// Will return an error if the event can't be sent.
     fn send_event(&self, event: Event) -> Result<(), Box<dyn Error>>;
 }
 
@@ -16,7 +19,7 @@ pub struct TrackerEventSender {}
 
 impl EventSender for TrackerEventSender {
     fn send_event(&self, event: Event) -> Result<(), Box<dyn Error>> {
-        println!("Event::{:?} sent.", event);
+        println!("Event::{event:?} sent.");
         Ok(())
     }
 }
