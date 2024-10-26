@@ -15,6 +15,7 @@
     "mpsc",
     "Prysor",
     "reqwest",
+    "rustversion",
     "Shivanandhan",
     "struct",
     "structs",
