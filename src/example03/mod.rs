@@ -13,7 +13,7 @@
 //!     user_repository: Box<dyn UserRepository>,
 //! }
 //! ```
-//! 
+//!
 //! The repository type used by `App` is defined at runtime.
 pub mod app;
 pub mod user;

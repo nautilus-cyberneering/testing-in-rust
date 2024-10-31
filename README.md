@@ -7,6 +7,7 @@ A collection of articles about testing in Rust.
 - [Custom mocks in Rust](./docs/custom-mocks-in-rust.md).
 - [Testing APIs in Rust](./docs/testing-apis-in-rust.md).
 - [Static vs Dynamic mocks in Rust](./docs/static-vs-dynamic-mocks-in-rust.md).
+- [Testing error variants in Rust using `assert_matches!` and alternatives](./docs/testing-error-variants-in-rust.md)
 
 ## Contributions
 

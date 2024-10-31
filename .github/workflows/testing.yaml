@@ -85,7 +85,6 @@ jobs:
         name: Check Unused Dependencies
         run: cargo machete
 
-
   unit:
     name: Units
     runs-on: ubuntu-latest
